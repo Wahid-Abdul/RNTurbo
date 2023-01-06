@@ -17,14 +17,9 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 import NativeSampleModule from './tm/NativeSampleModule';
+import { nThPrime } from './src/utils/calculators';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -63,6 +58,34 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  React.useEffect(() => {
+    initialMethod();
+  }, []);
+
+  const initialMethod = async () => {
+    // cpp implementation
+    let startTime = new Date();
+    const cppPrime = await NativeSampleModule.getNthPrime(15000);
+    let endTime = new Date();
+    console.log(
+      'CPP value: ',
+      cppPrime,
+      ' time: ',
+      endTime.getTime() - startTime.getTime(),
+    );
+
+    // js implementataion
+    startTime = new Date();
+    const jsPrime = await nThPrime(15000);
+    endTime = new Date();
+    console.log(
+      'JS value: ',
+      jsPrime,
+      ' time: ',
+      endTime.getTime() - startTime.getTime(),
+    );
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -83,9 +106,8 @@ function App(): JSX.Element {
               'the quick brown fox jumps over the lazy dog',
             )}
             {'\n'}
-            {NativeSampleModule.reverseString(
-              'Abdul Wahid',
-            )}
+            {NativeSampleModule.reverseString('Abdul Wahid')}
+            {NativeSampleModule.dummyText()}
           </Section>
         </View>
       </ScrollView>
