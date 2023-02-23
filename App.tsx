@@ -6,50 +6,20 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import NativeSampleModule from './tm/NativeSampleModule';
 import { nThPrime } from './src/utils/calculators';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -58,33 +28,49 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  React.useEffect(() => {
-    initialMethod();
-  }, []);
+  const callCPP10000 = async () => {
+    for (let i = 0; i < 10000; i++) {
+      await callCppPrime(i);
+    }
+  };
 
-  const initialMethod = async () => {
-    // cpp implementation
+  const callJS10000 = async () => {
+    for (let i = 0; i < 10000; i++) {
+      await callJsPrime(i);
+    }
+  };
+
+  const callCppPrime = async (n: number = 15000) => {
     let startTime = new Date();
-    const cppPrime = await NativeSampleModule.getNthPrime(15000);
+    const cppPrime = await NativeSampleModule.getNthPrime(n);
     let endTime = new Date();
     console.log(
-      'CPP value: ',
+      // 'CPP value: ',
       cppPrime,
-      ' time: ',
-      endTime.getTime() - startTime.getTime(),
-    );
-
-    // js implementataion
-    startTime = new Date();
-    const jsPrime = await nThPrime(15000);
-    endTime = new Date();
-    console.log(
-      'JS value: ',
-      jsPrime,
-      ' time: ',
+      n,
+      // ' time: ',
       endTime.getTime() - startTime.getTime(),
     );
   };
+
+  const callJsPrime = async (n: number = 15000) => {
+    let startTime = new Date();
+    const jsPrime = await nThPrime(n);
+    let endTime = new Date();
+    console.log(
+      // 'JS value: ',
+      jsPrime,
+      n,
+      // ' time: ',
+      endTime.getTime() - startTime.getTime(),
+    );
+  };
+
+  const getCPPVersion = async () => {
+    const version = await NativeSampleModule.getCPPVersion();
+
+    alert(version)
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -95,21 +81,23 @@ function App(): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Cxx TurboModule">
-            NativeSampleModule.reverseString(...) ={' '}
-            {NativeSampleModule.reverseString(
-              'the quick brown fox jumps over the lazy dog',
-            )}
-            {'\n'}
-            {NativeSampleModule.reverseString('Abdul Wahid')}
-            {NativeSampleModule.dummyText()}
-          </Section>
-        </View>
+        <TouchableOpacity onPress={() => callJsPrime()} style={backgroundStyle}>
+          <Text>JS</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => callCppPrime()}
+          style={backgroundStyle}>
+          <Text>CPP</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={callCPP10000} style={backgroundStyle}>
+          <Text>CPP 10000</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={callJS10000} style={backgroundStyle}>
+          <Text>JS 10000</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={getCPPVersion} style={backgroundStyle}>
+          <Text>Get CPP Version</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

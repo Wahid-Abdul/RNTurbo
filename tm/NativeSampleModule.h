@@ -15,7 +15,7 @@ class NativeSampleModule : public NativeSampleModuleCxxSpec<NativeSampleModule> 
   NativeSampleModule(std::shared_ptr<CallInvoker> jsInvoker);
 
   std::string reverseString(jsi::Runtime& rt, std::string input);
-  std::string dummyText(jsi::Runtime& rt);
+  std::string getCPPVersion(jsi::Runtime& rt);
   int getNthPrime(jsi::Runtime& rt, int n);
 };
 

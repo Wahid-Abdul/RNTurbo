@@ -4,7 +4,7 @@ import {TurboModuleRegistry} from 'react-native';
 
 export interface Spec extends TurboModule {
   readonly reverseString: (input: string) => string;
-  readonly dummyText: () => string;
+  readonly getCPPVersion: () => string;
   readonly getNthPrime: (n: number) => number;
 }
 
